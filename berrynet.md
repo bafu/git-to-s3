@@ -42,8 +42,11 @@ aws_access_key_id = ACCESS_KEY_ID
       ```
       
 1. Run uploader (`git_to_s3.py`)
-  * Uploader will upload dirs and files onto S3 indicated bucket.
+
+    * Uploader will upload dirs and files onto S3 indicated bucket.
+
 1. Go to S3 bucket and re-make it public
-  * Click stretch
-  * Click Actions
-  * Click Make public
+
+    * Click stretch
+    * Click Actions
+    * Click Make public
