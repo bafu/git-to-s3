@@ -24,11 +24,14 @@ import os
 import boto3
 import settings
 import shutil
-import errno, stat
+import errno
+import stat
+
 from os import listdir
 from os.path import isdir
 from mimetypes import MimeTypes
 from git import Repo
+
 
 def upload_file(file):
     """
@@ -63,19 +66,20 @@ def upload_file(file):
             Body=data)
 
 
-
 def upload_dir(path):
     """
     Uploads directory recursively to s3
     """
+    print('Upload dir {}'.format(path))
+    print('dir content {}'.format(listdir(path)))
     for file in listdir(path):
-
         filepath = os.path.join(path, file)
+        print('debug: check filepath {}'.format(filepath))
         if isdir(filepath) is True:
             upload_dir(filepath)
         else:
             upload_file(filepath)
-
+    print('debug leave upload_dir')
 
 
 def remove_readonly(func, path, excinfo):
@@ -87,26 +91,29 @@ def remove_readonly(func, path, excinfo):
     func(path)
 
 
+def main():
+    try:
+        # Create temp directory
+        print("Creating temporary directory %s" % settings.TEMP_DIRECTORY)
+        if not os.path.exists(settings.TEMP_DIRECTORY):
+            os.makedirs(settings.TEMP_DIRECTORY)
+
+        # Clone repository to temp directory
+        #print("Cloning repository from %s" % settings.GIT_URL)
+        #Repo.clone_from(settings.GIT_URL, settings.TEMP_DIRECTORY)
+
+        # Uploads contents of temp directory to s3
+        print("Uploading to S3")
+        upload_dir(settings.TEMP_DIRECTORY)
+
+    except Exception as ex:
+        print(ex)
+
+    #finally:
+    #    # Deletes temporary directory
+    #    print("Deleting temporary directory and contents")
+    #    shutil.rmtree(settings.TEMP_DIRECTORY, onerror=remove_readonly)
 
 
-try:
-    # Create temp directory
-    print("Creating temporary directory %s" % settings.TEMP_DIRECTORY)
-    if not os.path.exists(settings.TEMP_DIRECTORY):
-        os.makedirs(settings.TEMP_DIRECTORY)
-
-    # Clone repository to temp directory
-    print("Cloning repository from %s" % settings.GIT_URL)
-    Repo.clone_from(settings.GIT_URL, settings.TEMP_DIRECTORY)
-
-    # Uploads contents of temp directory to s3
-    print("Uploading to S3")
-    upload_dir(settings.TEMP_DIRECTORY)
-
-except Exception as ex:
-    print(ex)
-
-finally:
-    # Deletes temporary directory
-    print("Deleting temporary directory and contents")
-    shutil.rmtree(settings.TEMP_DIRECTORY, onerror=remove_readonly)
+if __name__ == '__main__':
+    main()
