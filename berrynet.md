@@ -15,7 +15,7 @@ aws_access_key_id = ACCESS_KEY_ID
   1. Update local repository
 
     ```
-    $ dput berrynet
+    $ dput berrynet <changes-file>
     ```
 
   1. Copy updated files from repository to temp dir.
