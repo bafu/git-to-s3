@@ -47,3 +47,10 @@ aws_access_key_id = ACCESS_KEY_ID
   * Click stretch
   * Click Actions
   * Click Make public
+
+# Automation
+
+* [Get bucket obj list](https://stackoverflow.com/questions/42809096/difference-in-boto3-between-resource-client-and-session)
+* Make folder public
+  * [1](https://stackoverflow.com/questions/32395687/using-boto3-and-python-how-make-a-folder-public)
+  * [2](https://stackoverflow.com/questions/41904806/how-to-upload-a-file-to-s3-and-make-it-public-using-boto3)
