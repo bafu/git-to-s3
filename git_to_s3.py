@@ -33,24 +33,28 @@ from mimetypes import MimeTypes
 from git import Repo
 
 
-def upload_file(file):
+def upload_file(filepath):
     """
     uploads a file to s3
     """
-    print("Uploading %s" % file)
+    print("Uploading %s" % filepath)
 
     #Get the mime type of the file
     mime = MimeTypes()
-    mime_type = mime.guess_type(file)[0]
+    mime_type = mime.guess_type(filepath)[0]
 
-    data = open(file, 'rb')
+    data = open(filepath, 'rb')
 
-    local_key = file.replace(settings.TEMP_DIRECTORY, "")
+    local_key = filepath.replace(settings.TEMP_DIRECTORY, "")
 
     # Replace windows slashes with unix slashes
     key = local_key.replace("\\", "/")
 
     # Remove first /
+    #
+    # e.g. If a filepath in bucket "repo" is "repo/dist/filename"
+    #     bucket: "repo"
+    #     key: "dist/filename"
     if key.startswith("/"):
         key = key[1:]
 
@@ -59,11 +63,13 @@ def upload_file(file):
     if mime_type:
         storage_service.Object(settings.AWS_STORAGE_BUCKET_NAME, key).put(
             Body=data,
-            ContentType=mime_type)
+            ContentType=mime_type,
+            ACL='public-read')
     else:
         # Use default mime type
         storage_service.Object(settings.AWS_STORAGE_BUCKET_NAME, key).put(
-            Body=data)
+            Body=data,
+            ACL='public-read')
 
 
 def upload_dir(path):
